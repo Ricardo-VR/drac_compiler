@@ -15,6 +15,22 @@ namespace drac {
 				this.simbolicTable = simbolicTable;
 			}
 
+        public override string ToString(){
+			var strFunctionProp =  "";
+
+			strFunctionProp += " isPrimitive: " + this.isPrimitive.ToString() + " ";
+			strFunctionProp += " ariety: " + this.ariety.ToString() + " ";
+			strFunctionProp += " vars: ";
+
+			foreach(var varName in this.simbolicTable){
+				strFunctionProp += varName + ", ";
+			}
+
+			return strFunctionProp;
+        }
+
+    
+
     	}
 
 		class SemanticVisitor {
