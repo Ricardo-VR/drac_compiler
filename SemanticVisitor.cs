@@ -53,7 +53,6 @@ namespace drac {
 				string currentFuncName = "";
 
 				public SemanticVisitor() {
-					Console.WriteLine("Starting Constuctor");
 						TableGlobalVar = new HashSet<string>();
 						TableFunc = new SortedDictionary<string, FunctionProperties>();
 
@@ -72,17 +71,13 @@ namespace drac {
 				}
 
 				public void Visit(DefList node){
-						Console.WriteLine("Start Semantic Analysis");
 						VisitChildren((dynamic) node);
-						Console.WriteLine("Checking for main");
 
 						if(!TableFunc.ContainsKey("main")){
-							// Only one parameter since there is no AnchorToken to call to.
 							throw new SemanticError("No main function in the program.");
 						}
 
 						noOfPass += 1;
-						Console.WriteLine("Second run");
 
 						VisitChildren((dynamic) node);
 				}
@@ -105,11 +100,9 @@ namespace drac {
 
 				public void Visit(FunDef node){
 						var funcName = node.AnchorToken.Lexeme;
-						Console.WriteLine("Fun Def: " + funcName);
 						
 						if(noOfPass == 1){
 							if(TableFunc.ContainsKey(funcName)){
-								Console.WriteLine("Enter Exception");
 								throw new SemanticError("Duplicated function: " + funcName, node.AnchorToken);
 							}
 							else{
@@ -125,16 +118,13 @@ namespace drac {
 						}
 						else{
 							currentFuncName = funcName;
-							Console.WriteLine("Current FuncName " + funcName);
 
 							var parmas = Visit((dynamic) node[0]);
 
 							TableFunc[currentFuncName].simbolicTable = parmas;
-							Console.WriteLine("Added simbolic table");
 
 							//Add local variables
 							Visit((dynamic) node[1]);
-							Console.WriteLine("Added local var");
 
 							//StmtList
 							Visit((dynamic) node[2]);
@@ -144,8 +134,8 @@ namespace drac {
 				}
 
 				public HashSet<string> Visit(ParametersList node){
-					Console.WriteLine("Start Param List");
 					var localVariables = new HashSet<string>();
+
 					//Add params to local variables
 					if(node.hasChildren){
 						foreach(var parameters in node[0]){
@@ -153,74 +143,33 @@ namespace drac {
 						}
 					}
 
-					Console.WriteLine("End Param List");
-
 					return localVariables;
-
 				}
 
 				public void Visit(VarDefList node){
 					var localVariables = TableFunc[currentFuncName].simbolicTable;
 
 					if(node.hasChildren){
-						foreach(var localVar in node[0][0]){
-						if(localVariables.Contains(localVar.AnchorToken.Lexeme)){
-							throw new SemanticError("Duplicated variable: " + localVar.AnchorToken.Lexeme, localVar.AnchorToken);
+						foreach(var nodeVarDef in node){
+
+							foreach(var nodeIdentifier in nodeVarDef[0]){
+								if(localVariables.Contains(nodeIdentifier.AnchorToken.Lexeme)){
+									throw new SemanticError("Duplicated variable: " + nodeIdentifier.AnchorToken.Lexeme, nodeIdentifier.AnchorToken);
+								}
+								else{
+									localVariables.Add(nodeIdentifier.AnchorToken.Lexeme);
+								}	
+							}
 						}
-						else{
-							localVariables.Add(localVar.AnchorToken.Lexeme);
-						}		
-					}
 					}
 				}
 
 				public void Visit(Assign node){
-					var localVar = TableFunc[currentFuncName].simbolicTable;
-					var varName = node.AnchorToken.Lexeme;
-					Console.WriteLine("Starting Assign");
-
-					if(!localVar.Contains(varName)){
-						if(!TableGlobalVar.Contains(varName)){
-							throw new SemanticError("Undeclared variable: " + varName, node.AnchorToken);
-						}
-					}
-					
-					if(node[0] is FunCall){
-						Visit((dynamic) node[0]);
-					}
-
-					if(node[0] is Identifier){
-						var secondVarName = node[0].AnchorToken.Lexeme;
-
-						if(!localVar.Contains(secondVarName)){
-							throw new SemanticError("Undeclared variable: " + secondVarName, node[0].AnchorToken);
-						}
-					}
-
-					if(node[0] is IntLiteral){
-						Visit((dynamic) node[0]);
-					}
-					Console.WriteLine("Ending Assign");
+					Visit((dynamic) node[0]);
 				}
-
-				/*public void Visit(ParamList node){
-					var localVar = TableFunc[currentFuncName].simbolicTable;
-					if (node.lengthChildren > 0){
-						foreach (var paramlist in node[0]){
-							var varName = node.AnchorToken.Lexeme;
-							if(localVar.Contains(varName)){
-								throw new SemanticError("Undeclared variable: " + varName, node[1].AnchorToken);	
-							}
-							else{
-								localVar.Add(varName);
-							}
-						}
-					}
-				}*/
 
 				public void Visit(FunCall node){
 					var funName = node.AnchorToken.Lexeme;
-					Console.WriteLine("Starting FuncCall " + funName);
 
 					if(!TableFunc.ContainsKey(funName)){
 						throw new SemanticError("Undeclared function: " + funName, node[0].AnchorToken);
@@ -228,13 +177,12 @@ namespace drac {
 					else{
 						var ariety = TableFunc[funName].ariety;
 
-						Console.WriteLine("FuncCall arity " + ariety);
 						if(node[0].lengthChildren != ariety){
-							throw new SemanticError("Expected Parameters for function " + funName + " : " + ariety + ". Got " + node[0].lengthChildren, 
+							throw new SemanticError("Expected parameters for function " + funName + ": " + ariety + ". Got: " + node[0].lengthChildren, 
 													node.AnchorToken);
 						}
 					}
-					Console.WriteLine("Ending FuncCall " + funName);
+
 					VisitChildren(node);
 				}
 
@@ -270,11 +218,9 @@ namespace drac {
 				}
 
 				public void Visit(StmtWhile node){
-					Console.WriteLine("Starting StmtWhile");
             		lvlLoop += 1;
             		VisitChildren(node);
             		lvlLoop -= 1;
-					Console.WriteLine("Ending StmtWhile");
        		 	}
 
 				public void Visit(StmtDoWhile node){
@@ -342,9 +288,7 @@ namespace drac {
 				}
 
 				public void Visit(StmtList node){
-					Console.WriteLine("Enter stmtList");
 					VisitChildren((dynamic) node);
-					Console.WriteLine("Finish stmtLst");
 				}
 
 				public void Visit(ExprList node){
@@ -368,9 +312,7 @@ namespace drac {
 				}
 
 				public void Visit(StmtIf node){
-					Console.WriteLine("Start StmtIf");
 					VisitChildren((dynamic) node);
-					Console.WriteLine("End StmtIf");
 				}
 
 				public void Visit(Else node){
@@ -406,6 +348,14 @@ namespace drac {
 				}
 
 				public void Visit(Not node){
+					//Does nothing
+				}
+
+				public void Visit(True node){
+					//Does nothing
+				}
+
+				public void Visit(False node){
 					//Does nothing
 				}
 

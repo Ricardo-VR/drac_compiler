@@ -78,10 +78,8 @@ namespace drac {
                     new Scanner(input).Scan().GetEnumerator());
                 var program = parser.program();
                 Console.Write(program.ToStringTree());
-                Console.WriteLine("Starting Semantic");
 
                 var semantic = new SemanticVisitor();
-                Console.WriteLine("Semantic created");
                 semantic.Visit((dynamic) program);
 
                 Console.WriteLine("Semantics OK.");
