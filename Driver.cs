@@ -27,14 +27,15 @@ namespace drac {
 
     public class Driver {
 
-        const string VERSION = "0.4";
+        const string VERSION = "0.5";
 
         //-----------------------------------------------------------
         static readonly string[] ReleaseIncludes = {
             "Lexical analysis",
             "Syntactic analysis",
             "AST construction",
-            "Semantical analysis"
+            "Semantical analysis",
+            "Wat code generation"
         };
 
         //-----------------------------------------------------------
@@ -89,6 +90,14 @@ namespace drac {
                 foreach (var entry in semantic.TableFunc) {
                     Console.WriteLine(entry);
                 }
+
+                /*var codeGenerator = new WatVisitor(semantic.Table);
+                File.WriteAllText(
+                    outputPath,
+                    codeGenerator.Visit((dynamic) ast));
+                Console.WriteLine(
+                    "Created Wat (WebAssembly text format) file "
+                    + $"'{outputPath}'.");*/
 
             } catch (Exception e) {
 
