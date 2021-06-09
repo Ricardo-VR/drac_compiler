@@ -92,7 +92,7 @@ namespace drac {
                     Console.WriteLine(entry);
                 }
                
-                var codeGenerator = new WatVisitor();
+                var codeGenerator = new WatVisitor(semantic.TableFunc, semantic.TableGlobalVar);
                 File.WriteAllText(
                     outputPath,
                     codeGenerator.Visit((dynamic) program));
