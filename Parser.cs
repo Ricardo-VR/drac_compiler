@@ -223,8 +223,6 @@ namespace drac {
 				public Node param_list(){
 						var paramList = new ParametersList();
 
-						Console.WriteLine(CurrentToken);
-
 						if(CurrentToken == TokenCategory.IDENTIFIER){
 							paramList.Add(id_list());
 						}

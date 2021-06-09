@@ -15,23 +15,21 @@ namespace drac {
 				this.simbolicTable = simbolicTable;
 			}
 
-       	public override string ToString(){
-			var strFunctionProp =  "";
+			public override string ToString(){
+				var strFunctionProp =  "";
 
-			strFunctionProp += " isPrimitive: " + this.isPrimitive.ToString() + " ";
-			strFunctionProp += " ariety: " + this.ariety.ToString() + " ";
-			strFunctionProp += " vars: ";
+				strFunctionProp += " isPrimitive: " + this.isPrimitive.ToString() + " ";
+				strFunctionProp += " ariety: " + this.ariety.ToString() + " ";
+				strFunctionProp += " vars: ";
 
-			if(simbolicTable?.Count > 0){
-				foreach(string varName in this.simbolicTable){
-					strFunctionProp += varName + ", ";
+				if(simbolicTable?.Count > 0){
+					foreach(string varName in this.simbolicTable){
+						strFunctionProp += varName + ", ";
+					}
 				}
+
+				return strFunctionProp;
 			}
-
-			return strFunctionProp;
-        }
-
-    
 
     	}
 
@@ -267,6 +265,10 @@ namespace drac {
 					VisitChildren((dynamic) node);
 				}
 
+				public void Visit(Multiply node){
+					VisitChildren((dynamic) node);
+				}
+
 				public void Visit(LessThan node){
 					VisitChildren((dynamic) node);
 				}
@@ -284,6 +286,10 @@ namespace drac {
 				}
 
 				public void Visit(Compare node){
+					VisitChildren((dynamic) node);
+				}
+
+				public void Visit(Different node){
 					VisitChildren((dynamic) node);
 				}
 
@@ -339,6 +345,10 @@ namespace drac {
 					VisitChildren((dynamic) node);
 				}
 
+				public void Visit(IdList node){
+					VisitChildren((dynamic) node);
+				}
+
 				public void Visit(CharLit node){
 					//Does nothing
 				}
@@ -356,6 +366,10 @@ namespace drac {
 				}
 
 				public void Visit(False node){
+					//Does nothing
+				}
+
+				public void Visit(Empty node){
 					//Does nothing
 				}
 
